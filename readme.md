@@ -1,0 +1,31 @@
+# Eindopdracht HWP uitbreiding
+- Olaf G
+- Fanuel H
+
+In deze opdracht gaat de HWP opdracht van de keypad uitgebreid worden tot een deurslot met keypad. Ook zal er een buzzer aan toegevoegd worden.
+
+# Statemachine
+In het ontwerp zal een statemachine te vinden zijn met vier states. Als het systeem opstart of reset zal deze naar de 'closed' state gaan. Wanneer iemand begint met cijfers invoeren zal de state veranderen naar "progress". Vanuit "progress" kan de state drie kanten op gaan. Met '*' zal de state resetten naar 'closed' en een reset geluidje geven, als de code van 4 cijfers fout is zal de buzzer een fout geluidje geven (signaal is te bepalen), als de code juist is zal er een 'juist signaal' klinken (signaal is te bepalen). Ook zal de led die bij alle andere states aan staat, uit gaan. Na 10 seconden zal de state terug naar 'closed' gaan.
+
+Als er een cijfer ingevoerd wordt, zal er een geluidje klinken. En op de sevensegment displayes zal een '-' komen op de plek van het getal.
+
+# Componenten
+Voor deze opdracht moeten meerdere componenten gemaakt worden.
+
+## Statemachine,
+Is hierboven al beschreven.
+
+## Keypad 
+Voor dit component moet een module gemaakt worden dat controleerd of er een key is ingedrukt en de key doorgeeft als output. Daarnaast geeft deze ook een puls als er een cijfer is ingedrukt. Ook geeft deze de keypad reset signaal, keypad done en pressed signaal.
+
+## Passcode
+Dit is een component dat de keys opslaat wanneer deze zijn ingedrukt en daarna controleerd of de cijfercode correct is.
+
+## Buzzer
+Dit is een component dat de buzzer aanstuurt om de geluiden te geven. Je kunt selecteren welk geluid door het geluid te selecteren. De geluiden zijn: 'key pressed', 'code fault', 'code correct' en 'reset'. De exacte geluiden voor deze signalen moeten nog bepaald worden.
+
+## Sevensegment Driver
+Deze driver moet de sevensegments aansturen. En bij iedere cijferspuls zal deze een extra '-' op een display zetten.
+
+## Counter
+Om terug te gaan naar de closed state wordt een counter gebruikt.
