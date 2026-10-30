@@ -1,0 +1,8 @@
+*.aux
+*.fls
+*.log
+*.cr.mti
+*.mpf
+*.fdb_latexmk
+*.wlf
+work
