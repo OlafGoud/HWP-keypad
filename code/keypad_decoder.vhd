@@ -20,17 +20,18 @@ begin
 		nibble := "1111";
 		valid := '1';
 		case keypad_input is
-			when "00010100" => nibble := "0000"; -- 0
-			when "10001000" => nibble := "0001"; -- 1
-			when "10000100" => nibble := "0010"; -- 2
-			when "10000010" => nibble := "0011"; -- 3
-			when "01001000" => nibble := "0100"; -- 4
-			when "01000100" => nibble := "0101"; -- 5 
-			when "01000010" => nibble := "0110"; -- 6
-			when "00101000" => nibble := "0111"; -- 7
-			when "00100100" => nibble := "1000"; -- 8
-			when "00100010" => nibble := "1001"; -- 9
-			when "00011000" => nibble := "1110"; -- * (resetknop, zie keypad_passcode.vhd)
+			-- Alle inputs zijn inverted
+			when "11101011" => nibble := "0000"; -- 0
+			when "01110111" => nibble := "0001"; -- 1
+			when "01111011" => nibble := "0010"; -- 2
+			when "01111101" => nibble := "0011"; -- 3
+			when "10110111" => nibble := "0100"; -- 4
+			when "10111011" => nibble := "0101"; -- 5 
+			when "10111101" => nibble := "0110"; -- 6
+			when "11010111" => nibble := "0111"; -- 7
+			when "11011011" => nibble := "1000"; -- 8
+			when "11011101" => nibble := "1001"; -- 9
+			when "11100111" => nibble := "1110"; -- * (resetknop, zie keypad_passcode.vhd)
 			when others => valid := '0';
 		end case;
 		if blank = '1' then
