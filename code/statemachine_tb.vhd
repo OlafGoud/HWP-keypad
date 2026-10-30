@@ -269,3 +269,40 @@ begin
     end process;
 
 end architecture simulation;
+-- run -all
+-- # ** Note: Passed: Closed_s initial
+-- #    Time: 6 ns  Iteration: 0  Instance: /tb_statemachine
+-- # ** Note: Passed: Progress_s
+-- #    Time: 16 ns  Iteration: 0  Instance: /tb_statemachine
+-- # ** Note: Passed: Progress_s hold
+-- #    Time: 26 ns  Iteration: 0  Instance: /tb_statemachine
+-- # ** Note: Passed: Correct_s
+-- #    Time: 36 ns  Iteration: 0  Instance: /tb_statemachine
+-- # ** Note: Passed: Correct_s hold
+-- #    Time: 46 ns  Iteration: 0  Instance: /tb_statemachine
+-- # ** Note: Passed: Correct to Closed
+-- #    Time: 56 ns  Iteration: 0  Instance: /tb_statemachine
+-- # ** Note: Passed: Progress_s again
+-- #    Time: 66 ns  Iteration: 0  Instance: /tb_statemachine
+-- # ** Note: Passed: Fault_s
+-- #    Time: 76 ns  Iteration: 0  Instance: /tb_statemachine
+-- # ** Note: Passed: Fault_s hold
+-- #    Time: 86 ns  Iteration: 0  Instance: /tb_statemachine
+-- # ** Note: Passed: Fault to Closed
+-- #    Time: 96 ns  Iteration: 0  Instance: /tb_statemachine
+-- # ** Note: Passed: Progress_s reset test
+-- #    Time: 106 ns  Iteration: 0  Instance: /tb_statemachine
+-- # ** Note: Passed: Progress to Closed
+-- #    Time: 116 ns  Iteration: 0  Instance: /tb_statemachine
+-- # ** Note: Passed: Progress_s final
+-- #    Time: 126 ns  Iteration: 0  Instance: /tb_statemachine
+-- # ** Note: Passed: Both codes activated
+-- #    Time: 136 ns  Iteration: 0  Instance: /tb_statemachine
+-- # ** Note: Passed: Correct and Reset
+-- #    Time: 146 ns  Iteration: 0  Instance: /tb_statemachine
+-- # ** Note: Passed: Progress before reset
+-- #    Time: 156 ns  Iteration: 0  Instance: /tb_statemachine
+-- # ** Note: Passed: Fault and Reset
+-- #    Time: 166 ns  Iteration: 0  Instance: /tb_statemachine
+-- # ** Note: ALL TESTS COMPLETED SUCCESSFULLY!
+-- #    Time: 166 ns  Iteration: 0  Instance: /tb_statemachine
