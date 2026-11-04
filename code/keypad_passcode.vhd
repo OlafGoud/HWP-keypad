@@ -9,12 +9,16 @@ entity keypad_passcode is
         pressed: in std_ulogic;
         code: out nibble_array;
         digit_count: out natural range 0 to 4;
-        full: out std_ulogic
+        code_correct: out std_ulogic;
+        code_incorrect: out std_ulogic;
+        full: out std_ulogic -- is 'true' wanneer de ingevoerde code bestaat uit 4 getallen
     );
 end entity;
 
 architecture behavorial of keypad_passcode is
     constant CLEAR_KEY: std_ulogic_vector(3 downto 0) := "1110"; -- reset(*) knop, zie keypad_decoder.vhd
+    -- De juiste code is voor nu hardgecodeerd: 1 2 3 4
+    constant CORRECT_CODE: nibble_array := ("0001", "0010", "0011", "0100");
 
     signal code_reg : nibble_array := (others => (others => '0'));
     signal count: natural range 0 to 4 := 0;
@@ -38,4 +42,7 @@ begin
     code <= code_reg;
     digit_count <= count;
     full <= '1' when count = 4 else '0';
+    
+    code_correct <= '1' when (count = 4 and code_reg = CORRECT_CODE) else '0';
+    code_incorrect <= '1' when (count = 4 and code_reg /= CORRECT_CODE) else '0';
 end architecture;
