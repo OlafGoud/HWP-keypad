@@ -6,3 +6,8 @@
 *.fdb_latexmk
 *.wlf
 work
+/work
+/.vscode
+/HWP-Keypad.cr.mti
+/HWP-Keypad.mpf
+/transcript
