@@ -1,163 +1,249 @@
--- gen with gemini
--- make a testbench for it that checks 1x the right code and checks iwth assert that it gives correct, then reset it and try af fault code, and afther that test a right code again
+--------------------------------------------------------------------------
+-- passcode_tb.vhd
+--
+-- Testbench for the passcode component.
+-- The correct code in passcode.vhd is "0001 0010 1001 0011", i.e. the
+-- keys 1, 2, 9, 3 (hex nibbles).
+--
+-- The outputs of passcode are one-clock-cycle pulses, so a monitor process
+-- counts the clock cycles in which each output is high. Every check then
+-- compares how many pulses happened since the last "mark".
+--
+-- Tests:
+--   1. The correct code is entered      -> one codeCorrect pulse, only
+--                                          after the 4th digit.
+--   2. The system is reset              -> all outputs low, counter cleared.
+--   3. The incorrect code is entered    -> one codeFault pulse, only after
+--      (1 2 9 4, differs in the last digit). This only works as expected
+--      when test 2 really cleared the digit counter.
+--   4. The system is reset again and the correct code is entered
+--                                       -> one codeCorrect pulse.
+--------------------------------------------------------------------------
 
 library ieee;
 use ieee.std_logic_1164.all;
-use ieee.numeric_std.all;
 
 entity passcode_tb is
 end entity;
 
-architecture sim of passcode_tb is
+architecture testbench of passcode_tb is
 
-    -- Component declaration for the passcode unit under test (UUT)
-    component passcode is
-        port (
-          clk         : in std_ulogic;
-          reset       : in std_ulogic;
-          hexNibble   : in std_ulogic_vector(3 downto 0);
-          pressed     : in std_ulogic;
-          codeCorrect : out std_ulogic;
-          codeFault   : out std_ulogic;
-          digitPuls   : out std_ulogic;
-          codeReset   : out std_ulogic
-        );
-    end component;
+	constant CLK_PERIOD : time := 10 ns;
 
-    -- Testbench signals
-    signal tb_reset       : std_ulogic := '0';
-    signal tb_hexNibble   : std_ulogic_vector(3 downto 0) := "0000";
-    signal tb_pressed     : std_ulogic := '0';
-    signal tb_clk : std_ulogic := '0';
-    
-    signal tb_codeCorrect : std_ulogic;
-    signal tb_codeFault   : std_ulogic;
-    signal tb_digitPuls   : std_ulogic;
-    signal tb_codeReset   : std_ulogic;
+	component passcode is
+		port (
+			clk         : in  std_ulogic;
+			reset       : in  std_ulogic;
+			hexNibble   : in  std_ulogic_vector(3 downto 0);
+			pressed     : in  std_ulogic;
+			codeCorrect : out std_ulogic;
+			codeFault   : out std_ulogic;
+			digitPuls   : out std_ulogic;
+			codeReset   : out std_ulogic
+		);
+	end component;
+
+	-- Key values (hex nibbles) used in the codes.
+    constant KEY_0 : std_ulogic_vector(3 downto 0) := "0000";
+	constant KEY_1 : std_ulogic_vector(3 downto 0) := "0001";
+	constant KEY_2 : std_ulogic_vector(3 downto 0) := "0010";
+	constant KEY_3 : std_ulogic_vector(3 downto 0) := "0011";
+	constant KEY_4 : std_ulogic_vector(3 downto 0) := "0100";
+    constant KEY_5 : std_ulogic_vector(3 downto 0) := "0101";
+    constant KEY_6 : std_ulogic_vector(3 downto 0) := "0110";
+    constant KEY_7 : std_ulogic_vector(3 downto 0) := "0111";
+    constant KEY_8 : std_ulogic_vector(3 downto 0) := "1000";
+	constant KEY_9 : std_ulogic_vector(3 downto 0) := "1001";
+
+	signal clk         : std_ulogic := '0';
+	signal reset       : std_ulogic := '0';
+	signal hexNibble   : std_ulogic_vector(3 downto 0) := "0000";
+	signal pressed     : std_ulogic := '0';
+	signal codeCorrect : std_ulogic;
+	signal codeFault   : std_ulogic;
+	signal digitPuls   : std_ulogic;
+	signal codeReset   : std_ulogic;
+	signal finished    : boolean := false;
+
+	-- Number of clock cycles in which each output was high.
+	signal digit_cnt   : integer := 0;
+	signal correct_cnt : integer := 0;
+	signal fault_cnt   : integer := 0;
+	signal reset_cnt   : integer := 0;
 
 begin
 
-    -- Instantiate the Unit Under Test (UUT)
-    uut: passcode
-      port map (
-        clk         => tb_clk,
-        reset       => tb_reset,
-        hexNibble   => tb_hexNibble,
-        pressed     => tb_pressed,
-        codeCorrect => tb_codeCorrect,
-        codeFault   => tb_codeFault,
-        digitPuls   => tb_digitPuls,
-        codeReset   => tb_codeReset
-    );
-    clk_process : process
-    begin
-        while true loop
-            tb_clk <= '0';
-            wait for 5 ns;
+	duv : passcode
+		port map (
+			clk         => clk,
+			reset       => reset,
+			hexNibble   => hexNibble,
+			pressed     => pressed,
+			codeCorrect => codeCorrect,
+			codeFault   => codeFault,
+			digitPuls   => digitPuls,
+			codeReset   => codeReset
+		);
 
-            tb_clk <= '1';
-            wait for 5 ns;
-        end loop;
-    end process;
+	-- Clock; stops when the test is finished so the simulation ends.
+	clk_process : process
+	begin
+		while not finished loop
+			clk <= '0';
+			wait for CLK_PERIOD / 2;
+			clk <= '1';
+			wait for CLK_PERIOD / 2;
+		end loop;
+		wait;
+	end process;
 
-    -- Stimulus process
-    stim_proc: process
-    
-        -- Helper procedure to simulate pressing a key
-        procedure press_key(nibble : in std_ulogic_vector(3 downto 0)) is
-        begin
-            tb_hexNibble <= nibble;
-            wait for 20 ns;
-            tb_pressed <= '1'; -- Rising edge (registers digit)
-            wait for 20 ns;
-            tb_pressed <= '0'; -- Falling edge (clears digit pulse)
-            wait for 20 ns;
-        end procedure;
+	-- Watchdog: abort if the test hangs.
+	watchdog : process
+	begin
+		wait until finished for 1 ms;
+		assert finished report "Testbench timed out." severity failure;
+		wait;
+	end process;
 
-    begin
-        -- Initial Reset
-        report "Applying initial reset...";
-        tb_reset <= '1';
-        tb_pressed <= '0';
-        tb_hexNibble <= "0000";
-        wait for 40 ns;
-        tb_reset <= '0';
-        wait for 40 ns;
+	-- Output monitor: count the clock cycles in which each output is high.
+	monitor : process (clk)
+	begin
+		if rising_edge(clk) then
+			if digitPuls   = '1' then digit_cnt   <= digit_cnt   + 1; end if;
+			if codeCorrect = '1' then correct_cnt <= correct_cnt + 1; end if;
+			if codeFault   = '1' then fault_cnt   <= fault_cnt   + 1; end if;
+			if codeReset   = '1' then reset_cnt   <= reset_cnt   + 1; end if;
+		end if;
+	end process;
 
-        -------------------------------------------------------------
-        -- TEST 1: Enter Correct Code ("0001", "0001", "0001", "0001")
-        -------------------------------------------------------------
-        report "--- TEST 1: Entering Correct Code ---";
-        press_key("0001");
-        press_key("0001");
-        press_key("0001");
-        press_key("0001"); -- 4th digit triggers evaluation
+	stim_process : process
+		-- Pulse counts at the last "mark".
+		variable base_digit, base_correct, base_fault, base_reset : integer;
 
-        -- Check output with assert
-        assert (tb_codeCorrect = '1') 
-            report "TEST 1 FAILED: codeCorrect did not assert for the correct code!" 
-            severity error;
-            
-        if tb_codeCorrect = '1' then
-            report "TEST 1 PASSED: Code correct asserted successfully.";
-        end if;
+		procedure mark is
+		begin
+			base_digit   := digit_cnt;
+			base_correct := correct_cnt;
+			base_fault   := fault_cnt;
+			base_reset   := reset_cnt;
+		end procedure;
 
-        wait for 40 ns;
+		-- Press and release one key. pressed is held for several clock
+		-- cycles; the component must still count it as a single press.
+		procedure press_key (constant nibble : in std_ulogic_vector(3 downto 0)) is
+		begin
+			hexNibble <= nibble;
+			pressed   <= '1';
+			wait for 5 * CLK_PERIOD;
+			pressed   <= '0';
+			wait for 5 * CLK_PERIOD;
+		end procedure;
 
-        -------------------------------------------------------------
-        -- TEST 2: Reset the system
-        -------------------------------------------------------------
-        report "--- TEST 2: Resetting System ---";
-        tb_reset <= '1';
-        wait for 40 ns;
-        tb_reset <= '0';
-        wait for 40 ns;
+		-- Check the number of pulses since the last mark.
+		procedure check (
+			constant tag     : in string;
+			constant digits  : in integer;
+			constant correct : in integer;
+			constant fault   : in integer;
+			constant rst     : in integer
+		) is
+		begin
+			assert digit_cnt - base_digit = digits
+				report "test failed (" & tag & "): digitPuls pulses = " &
+					integer'image(digit_cnt - base_digit) & ", expected " & integer'image(digits)
+				severity error;
+			assert correct_cnt - base_correct = correct
+				report "test failed (" & tag & "): codeCorrect pulses = " &
+					integer'image(correct_cnt - base_correct) & ", expected " & integer'image(correct)
+				severity error;
+			assert fault_cnt - base_fault = fault
+				report "test failed (" & tag & "): codeFault pulses = " &
+					integer'image(fault_cnt - base_fault) & ", expected " & integer'image(fault)
+				severity error;
+			assert reset_cnt - base_reset = rst
+				report "test failed (" & tag & "): codeReset pulses = " &
+					integer'image(reset_cnt - base_reset) & ", expected " & integer'image(rst)
+				severity error;
+		end procedure;
 
-        -------------------------------------------------------------
-        -- TEST 3: Enter Fault Code ("0010", "0010", "0010", "0010")
-        -------------------------------------------------------------
-        report "--- TEST 3: Entering Fault Code ---";
-        press_key("0010");
-        press_key("0010");
-        press_key("0010");
-        press_key("0010"); -- 4th digit triggers evaluation
+		-- Pulse the reset input.
+		procedure do_reset is
+		begin
+			reset <= '1';
+			wait for 3 * CLK_PERIOD;
+			assert codeCorrect = '0' and codeFault = '0' and digitPuls = '0' and codeReset = '0'
+				report "test failed: outputs not low during reset" severity error;
+			reset <= '0';
+			wait for 3 * CLK_PERIOD;
+		end procedure;
+	begin
+		report "Testing entity passcode.";
 
-        -- Check output with assert
-        assert (tb_codeFault = '1') 
-            report "TEST 3 FAILED: codeFault did not assert for the wrong code!" 
-            severity error;
-            
-        if tb_codeFault = '1' then
-            report "TEST 3 PASSED: Code fault asserted successfully.";
-        end if;
+		-- Idle: nothing happens without key presses.
+		wait for 5 * CLK_PERIOD;
+		mark;
+		assert codeCorrect = '0' and codeFault = '0' and digitPuls = '0' and codeReset = '0'
+			report "test failed: outputs not low while idle" severity error;
 
-        wait for 40 ns;
+		----------------------------------------------------------------
+		-- 1. The correct code is entered (1 2 9 3)
+		----------------------------------------------------------------
+		report "Test 1: correct code";
+		press_key(KEY_1);
+		press_key(KEY_2);
+		press_key(KEY_9);
+		check("test 1, after 3 digits", 3, 0, 0, 0);   -- no result yet
+		press_key(KEY_3);
+		check("test 1, correct code", 4, 1, 0, 0);
 
-        -------------------------------------------------------------
-        -- TEST 4: Reset and enter Correct Code again
-        -------------------------------------------------------------
-        report "--- TEST 4: Resetting and Entering Correct Code Again ---";
-        tb_reset <= '1';
-        wait for 40 ns;
-        tb_reset <= '0';
-        wait for 40 ns;
+		----------------------------------------------------------------
+		-- 2. The system is reset
+		----------------------------------------------------------------
+		report "Test 2: reset";
+		do_reset;
 
-        press_key("0001");
-        press_key("0001");
-        press_key("0001");
-        press_key("0001");
+		----------------------------------------------------------------
+		-- 3. The incorrect code is entered (1 2 9 4)
+		----------------------------------------------------------------
+		report "Test 3: incorrect code";
+		mark;
+		press_key(KEY_1);
+		press_key(KEY_2);
+		press_key(KEY_9);
+		check("test 3, after 3 digits", 3, 0, 0, 0);   -- no result yet
+		press_key(KEY_4);
+		check("test 3, incorrect code", 4, 0, 1, 0);
 
-        -- Check output with assert
-        assert (tb_codeCorrect = '1') 
-            report "TEST 4 FAILED: codeCorrect did not assert on the second attempt!" 
-            severity error;
-            
-        if tb_codeCorrect = '1' then
-            report "TEST 4 PASSED: Second correct code asserted successfully.";
-        end if;
+		----------------------------------------------------------------
+		-- 4. The system is reset, and the correct code is entered
+		----------------------------------------------------------------
+		report "Test 4: reset and correct code";
+		do_reset;
+		mark;
+		press_key(KEY_1);
+		press_key(KEY_2);
+		press_key(KEY_9);
+		check("test 4, after 3 digits", 3, 0, 0, 0);   -- no result yet
+		press_key(KEY_3);
+		check("test 4, correct code", 4, 1, 0, 0);
 
-        report "--- ALL TESTS COMPLETED ---";
-        wait; -- Stop simulation
-    end process;
+		report "Test completed.";
+		finished <= true;
+		wait;
+	end process;
 
 end architecture;
+
+-- Output:
+-- # ** Note: Testing entity passcode.
+-- #    Time: 0 ps  Iteration: 0  Instance: /passcode_tb
+-- # ** Note: Test 1: correct code
+-- #    Time: 50 ns  Iteration: 0  Instance: /passcode_tb
+-- # ** Note: Test 2: reset
+-- #    Time: 450 ns  Iteration: 0  Instance: /passcode_tb
+-- # ** Note: Test 3: incorrect code
+-- #    Time: 510 ns  Iteration: 0  Instance: /passcode_tb
+-- # ** Note: Test 4: reset and correct code
+-- #    Time: 910 ns  Iteration: 0  Instance: /passcode_tb
+-- # ** Note: Test completed.
+-- #    Time: 1370 ns  Iteration: 0  Instance: /passcode_tb
