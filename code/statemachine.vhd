@@ -15,7 +15,7 @@ entity statemachine is
     faultCode: out std_ulogic;
     correctCode: out std_ulogic;
     ledOut: out std_ulogic;
-    resetClock: out std_ulogic
+    resetTimeOutClock: out std_ulogic
   );
 end entity;
 
@@ -76,28 +76,28 @@ begin
         faultCode <= '0';
         correctCode <= '0';
         ledOut <= '1';
-        resetClock <= '1';
+        resetTimeOutClock <= '1';
 
       when Progress_s =>
         resetOut <= '0';
         faultCode <= '0';
         correctCode <= '0';
         ledOut <= '1';
-        resetClock <= '1';
+        resetTimeOutClock <= '1';
       
         when Correct_s =>
         resetOut <= '0';
         faultCode <= '0';
         correctCode <= '1';
         ledOut <= '0';
-        resetClock <= '0';
+        resetTimeOutClock <= '0';
       
         when Fault_s =>
         resetOut <= '0';
         faultCode <= '1';
         correctCode <= '0';
         ledOut <= '1';
-        resetClock <= '0';
+        resetTimeOutClock <= '0';
     
     end case;
   end process;

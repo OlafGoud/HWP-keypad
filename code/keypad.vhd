@@ -66,26 +66,26 @@ begin
       end case;
 
       case cols is
-        when "1110" => 
+        when "0111" => 
           case currentRow is
             when 0 => currentKey <= "0001";
-            when 1 => currentKey <= "0100";
+            when 1 => currentKey <= "1110";
             when 2 => currentKey <= "0111";
-            when 3 => currentKey <= "1110";
-            when others => null;
-          end case;
-        when "1101" =>
-          case currentRow is
-            when 0 => currentKey <= "0010";
-            when 1 => currentKey <= "0101";
-            when 2 => currentKey <= "1000";
-            when 3 => currentKey <= "0000";
+            when 3 => currentKey <= "0100";
             when others => null;
           end case;
         when "1011" =>
           case currentRow is
+            when 0 => currentKey <= "0010";
+            when 1 => currentKey <= "0000";
+            when 2 => currentKey <= "1000";
+            when 3 => currentKey <= "0101";
+            when others => null;
+          end case;
+        when "1101" =>
+          case currentRow is
             when 0 => currentKey <= "0011";
-            when 1 => currentKey <= "0110";
+            when 3 => currentKey <= "0110";
             when 2 => currentKey <= "1001";
             when others => null;
           end case;
@@ -98,6 +98,7 @@ begin
       end if;
     end if;
   end process;
+
 
   process(outClock)
   begin
@@ -112,6 +113,5 @@ begin
       end if;
     end if;
   end process;
-  
   
 end architecture;

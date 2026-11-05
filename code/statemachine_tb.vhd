@@ -23,7 +23,7 @@ architecture simulation of tb_statemachine is
     signal faultCode    : std_ulogic;
     signal correctCode  : std_ulogic;
     signal ledOut       : std_ulogic;
-    signal resetClock   : std_ulogic;
+    signal resetTimeOutClock   : std_ulogic;
 
     constant CLK_PERIOD : time := 10 ns;
 
@@ -43,7 +43,7 @@ begin
             faultCode     => faultCode,
             correctCode   => correctCode,
             ledOut        => ledOut,
-            resetClock    => resetClock
+            resetTimeOutClock    => resetTimeOutClock
         );
 
     -- Clock generation
@@ -66,7 +66,7 @@ begin
             constant expected_faultCode   : std_ulogic;
             constant expected_correctCode : std_ulogic;
             constant expected_ledOut      : std_ulogic;
-            constant expected_resetClock  : std_ulogic;
+            constant expected_resetTimeOutClock  : std_ulogic;
             constant state_name           : string
         ) is
         begin
@@ -89,8 +89,8 @@ begin
                 report "ledOut error in " & state_name
                 severity error;
 
-            assert resetClock = expected_resetClock
-                report "resetClock error in " & state_name
+            assert resetTimeOutClock = expected_resetTimeOutClock
+                report "resetTimeOutClock error in " & state_name
                 severity error;
 
             report "Passed: " & state_name
