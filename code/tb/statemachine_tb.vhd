@@ -269,6 +269,8 @@ begin
     end process;
 
 end architecture simulation;
+
+-- Output: 
 -- run -all
 -- # ** Note: Passed: Closed_s initial
 -- #    Time: 6 ns  Iteration: 0  Instance: /tb_statemachine

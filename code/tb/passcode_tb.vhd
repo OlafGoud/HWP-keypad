@@ -5,21 +5,22 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
-entity tb_passcode is
+entity passcode_tb is
 end entity;
 
-architecture sim of tb_passcode is
+architecture sim of passcode_tb is
 
     -- Component declaration for the passcode unit under test (UUT)
     component passcode is
         port (
-            reset       : in std_ulogic;
-            hexNibble   : in std_ulogic_vector(3 downto 0);
-            pressed     : in std_ulogic;
-            codeCorrect : out std_ulogic;
-            codeFault   : out std_ulogic;
-            digitPuls   : out std_ulogic;
-            codeReset   : out std_ulogic
+          clk         : in std_ulogic;
+          reset       : in std_ulogic;
+          hexNibble   : in std_ulogic_vector(3 downto 0);
+          pressed     : in std_ulogic;
+          codeCorrect : out std_ulogic;
+          codeFault   : out std_ulogic;
+          digitPuls   : out std_ulogic;
+          codeReset   : out std_ulogic
         );
     end component;
 
@@ -27,6 +28,7 @@ architecture sim of tb_passcode is
     signal tb_reset       : std_ulogic := '0';
     signal tb_hexNibble   : std_ulogic_vector(3 downto 0) := "0000";
     signal tb_pressed     : std_ulogic := '0';
+    signal tb_clk : std_ulogic := '0';
     
     signal tb_codeCorrect : std_ulogic;
     signal tb_codeFault   : std_ulogic;
@@ -37,15 +39,26 @@ begin
 
     -- Instantiate the Unit Under Test (UUT)
     uut: passcode
-        port map (
-            reset       => tb_reset,
-            hexNibble   => tb_hexNibble,
-            pressed     => tb_pressed,
-            codeCorrect => tb_codeCorrect,
-            codeFault   => tb_codeFault,
-            digitPuls   => tb_digitPuls,
-            codeReset   => tb_codeReset
-        );
+      port map (
+        clk         => tb_clk,
+        reset       => tb_reset,
+        hexNibble   => tb_hexNibble,
+        pressed     => tb_pressed,
+        codeCorrect => tb_codeCorrect,
+        codeFault   => tb_codeFault,
+        digitPuls   => tb_digitPuls,
+        codeReset   => tb_codeReset
+    );
+    clk_process : process
+    begin
+        while true loop
+            tb_clk <= '0';
+            wait for 5 ns;
+
+            tb_clk <= '1';
+            wait for 5 ns;
+        end loop;
+    end process;
 
     -- Stimulus process
     stim_proc: process

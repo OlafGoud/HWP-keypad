@@ -1,0 +1,35 @@
+\section{Testbenches}
+Hieronder zijn de testbenches te vinden. De testbenches zijn gegenereerd met AI. 
+
+\subsection{Buzzer}
+De testbench voert hier de volgende tests uit: \newline
+1. Er wordt gekeken of er de buzzer aan gaat zonder invoer. Dit slaagt als de buzzer niet aangaat. \newline
+2 t/m 5. De bestemde functies worden getest: 1 korte piep voor invoer, twee korte piepjes voor een correct wachtwoord, en een lange piep als de code fout is, of als de reset-knop wordt ingedrukt. \newline
+6. Er wordt getest of de buzzer langer aangaat dan zou moeten wanneer een knop lang ingedrukt blijft. Test slaagt als de buzzer uitgaat na de aangegeven lengte. \newline
+7. De prioriteit van de pulses wordt getest door alle pulsen hoog te maken. De prioriteit moet correct > fout > reset > press zijn. Test slaagt als de buzzer ,bij meerdere pulses, de puls met de hoogste prioriteit volgt. \newline
+\lstinputlisting{caption=buzzer_tb, style=vhdl}{../code/tb/buzzer_tb.vhd}
+
+\subsection{Clock Divider}
+Er wordt gekeken of de clockOut-variabele hoog wordt na elke vier clock cycles. Dit is normaal elke 25 miljoen, maar om het testproces te versimpelen is een lager getal gekozen. \newline
+\lstinputlisting{caption=ClockDivider_tb, style=vhdl}{../code/tb/ClockDivider_tb.vhd}
+
+\subsection{Keypad}
+Hier wordt getest of de invoer vanuit de keypad goed is vertaald naar een integer. Ook wordt de resetknop "*" getest. \newline
+\lstinputlisting{caption=keypad_tb, style=vhdl}{../code/tb/keypad_tb.vhd}
+
+\subsection{Passcode}
+De testbench voert hier de volgende tests uit: \newline
+1. Er wordt gekeken of bij een correct wachtword het signaal wordt doorgegeven dat het wachtwoord klopt. \newline
+2. Er wordt gekeken of het systeem goed wordt gereset. \newline
+3. Er wordt gekeken of bij een fout wachtword het signaal wordt doorgegeven dat het wachtwoord niet klopt. \newline
+4. Dit is een combinatie van test 1 & 2, waarbij het systeem eerst wordt gereset, waarna het juiste wachtwoord wordt ingevoerd. \newline
+\lstinputlisting{caption=passcode_tb, style=vhdl}{../code/tb/passcode_tb.vhd}
+
+\subsection{Seven Segment Driver}
+De testbench checkt eerst of de displays uit staan na een reset-signaal. Hierna wordt er getest of er bij elke nieuwe invoer een nieuw streepje tevoorschijn komt bij de displays. Dit begint bij HEX0 en de laatste zou HEX3 moeten zijn. \newline
+\lstinputlisting{caption=seven_segment_driver_tb, style=vhdl}{../code/tb/seven_segment_driver_tb.vhd}
+
+\subsection{State Machine}
+De testbench voert hier, voor elke transitie naar een andere staat, een test uit om te bepalen of deze daadwerkelijk gebeurt bij de bijbehorende waarden. \newline
+\lstinputlisting{caption=statemachine_tb, style=vhdl}{../code/tb/statemachine_tb.vhd}
+

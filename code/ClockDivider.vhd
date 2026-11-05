@@ -16,21 +16,22 @@ end entity;
 architecture behavoural of ClockDivider is
 
   signal clockSig : std_ulogic := '0';
-  signal count : integer := 1;
+  signal count    : natural := 0;
 
 begin
   process(clk, reset)
   begin
     if(reset = '1') then
-      count <= 1;
+      count <= 0;
       clockSig <= '0';
     elsif(rising_edge(clk)) then
-      count <= count + 1;
-      if (count = counter) then
+      if (count = counter - 1) then
+        count <= 0;
         clockSig <= not clockSig;
-        count <= 1;
+      else
+          count <= count + 1;
       end if;
     end if;
-    clockOut <= clockSig;
   end process;
+  clockOut <= clockSig;
 end architecture;

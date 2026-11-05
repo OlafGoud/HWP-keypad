@@ -128,3 +128,31 @@ begin
   end process;
 
 end architecture;
+
+-- Output:
+-- # ** Note: TEST 1: Pressing key '1'
+-- #    Time: 2 ms  Iteration: 0  Instance: /keypad_tb
+-- # ** Note: TEST 2: Pressing key '2'
+-- #    Time: 4000010 ns  Iteration: 0  Instance: /keypad_tb
+-- # ** Note: TEST 3: Pressing key '3'
+-- #    Time: 5500010 ns  Iteration: 0  Instance: /keypad_tb
+-- # ** Note: TEST 4: Pressing key '4'
+-- #    Time: 7000010 ns  Iteration: 0  Instance: /keypad_tb
+-- # ** Note: TEST 5: Pressing key '5'
+-- #    Time: 9000010 ns  Iteration: 0  Instance: /keypad_tb
+-- # ** Note: TEST 6: Pressing key '6'
+-- #    Time: 10500010 ns  Iteration: 0  Instance: /keypad_tb
+-- # ** Note: TEST 7: Pressing key '7'
+-- #    Time: 12000010 ns  Iteration: 0  Instance: /keypad_tb
+-- # ** Note: TEST 8: Pressing key '8'
+-- #    Time: 14000010 ns  Iteration: 0  Instance: /keypad_tb
+-- # ** Note: TEST 9: Pressing key '9'
+-- #    Time: 15500010 ns  Iteration: 0  Instance: /keypad_tb
+-- # ** Note: TEST 10: Pressing key '0'
+-- #    Time: 17000010 ns  Iteration: 0  Instance: /keypad_tb
+-- # ** Note: TEST 11: Pressing key '*'
+-- #    Time: 19000010 ns  Iteration: 0  Instance: /keypad_tb
+-- # ** Note: TEST 12: Releasing key and finishing simulation
+-- #    Time: 20500010 ns  Iteration: 0  Instance: /keypad_tb
+-- # ** Note: Simulation completed successfully!
+-- #    Time: 23500010 ns  Iteration: 0  Instance: /keypad_tb
