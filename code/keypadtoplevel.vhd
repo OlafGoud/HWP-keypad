@@ -40,14 +40,17 @@ architecture behavioral of keypadtoplevel is
     );
   end component;
 
-  component keypad_passcode is
-    port(
+  component passcode is
+    port (
+      clk: in std_ulogic; 
       reset: in std_ulogic;
-      hex_nibble: in std_ulogic_vector(3 downto 0);
+      hexNibble: in std_ulogic_vector(3 downto 0);
       pressed: in std_ulogic;
-      code: out nibble_array;
-      digit_count: out natural range 0 to 4;
-      full: out std_ulogic
+
+      codeCorrect: out std_ulogic;
+      codeFault: out std_ulogic;
+      digitPuls: out std_ulogic;
+      codeReset: out std_ulogic
     );
   end component;
 
@@ -113,13 +116,14 @@ begin
     resetFromTime => resetFromTimeSig,
 
     resetOut => resetComponentsOut,
-    faultCode => buzzerFault
-    correctCode => buzzerCorrect
+    faultCode => buzzerFault,
+    correctCode => buzzerCorrect,
     ledOut => ledOut,
     resetTimeOutClock => resetClock
   );
 
   passcodemodule : passcode port map (
+    clk => clk,
     reset => resetComponentsOut,
     hexNibble => keyCode,
     pressed => keyPressed,
@@ -132,11 +136,11 @@ begin
 
   sevensegmodule : seven_segment_driver port map (
     reset => resetComponentsOut,
-    digitPuls => digitPulsSig,
+    digitpulse => digitPulsSig,
     HEX0 => SEG0,
     HEX1 => SEG1,
     HEX2 => SEG2,
-    HEX3 => SEG3,
+    HEX3 => SEG3
   );
 
   keypadmodule : keypad port map (

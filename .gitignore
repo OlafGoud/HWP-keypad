@@ -9,3 +9,8 @@ work
 .vscode
 transcript
 output_files
+db/
+incremental_db/
+c5_pin_model_dump*
+*.qpf
+*.qsf

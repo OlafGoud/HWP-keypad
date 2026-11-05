@@ -31,8 +31,12 @@ architecture behavorial of keypad is
   signal reset : std_ulogic := '0';
   signal outClock : std_ulogic;
 
-  signal lastKey : std_ulogic_vector(3 downto 0);
-  signal currentKey : std_ulogic_vector(3 downto 0);
+  signal lastKey : std_ulogic_vector(3 downto 0) := (others => '0');
+  signal currentKey : std_ulogic_vector(3 downto 0) := (others => '0');
+
+  -- for enabling pressing 2 times the same button
+  signal detected: std_ulogic := '0';
+  signal keyReleased: std_ulogic := '1';
 
 begin
   
@@ -57,6 +61,11 @@ begin
   process(scanRow)
   begin
     if rising_edge(scanRow) then
+      if currentRow = 0 then
+        detected <= '0';
+        currentKey <= "1111";
+      end if;
+
       case currentRow is
         when 0 => rows <= "1110";
         when 1 => rows <= "1101";
@@ -68,50 +77,75 @@ begin
       case cols is
         when "0111" => 
           case currentRow is
-            when 0 => currentKey <= "0001";
-            when 1 => currentKey <= "1110";
-            when 2 => currentKey <= "0111";
-            when 3 => currentKey <= "0100";
+            when 0 => 
+              currentKey <= "0001";
+              detected <= '1';
+            when 1 => 
+              currentKey <= "1110";
+              detected <= '1';
+            when 2 => 
+              currentKey <= "0111";
+              detected <= '1';
+            when 3 => 
+              currentKey <= "0100";
+              detected <= '1';
             when others => null;
           end case;
         when "1011" =>
           case currentRow is
-            when 0 => currentKey <= "0010";
-            when 1 => currentKey <= "0000";
-            when 2 => currentKey <= "1000";
-            when 3 => currentKey <= "0101";
+            when 0 => 
+              currentKey <= "0010";
+              detected <= '1';
+            when 1 => 
+              currentKey <= "0000";
+              detected <= '1';
+            when 2 => 
+              currentKey <= "1000";
+              detected <= '1';
+            when 3 => 
+              currentKey <= "0101";
+              detected <= '1';
             when others => null;
           end case;
         when "1101" =>
           case currentRow is
-            when 0 => currentKey <= "0011";
-            when 3 => currentKey <= "0110";
-            when 2 => currentKey <= "1001";
+            when 0 => 
+              currentKey <= "0011";
+              detected <= '1';
+            when 3 => 
+              currentKey <= "0110";
+              detected <= '1';
+            when 2 => 
+              currentKey <= "1001";
+              detected <= '1';
             when others => null;
           end case;
         when others => null;
       end case;
+
       if currentRow = 3 then
         currentRow <= 0;
+
+        if detected = '1' then
+          if keyReleased = '1' or (lastKey /= currentKey) then
+            pressed <= '1';
+            lastKey <= currentKey;
+            keycode <= currentKey;
+            keyReleased <= '0';
+          else
+            pressed <= '0';
+          end if;
+        else 
+          if cols = "1111" then
+            keyReleased <= '1';
+          end if;
+          pressed <= '0';
+        end if;
+
       else 
         currentRow <= currentRow + 1;
       end if;
-    end if;
-  end process;
 
-
-  process(outClock)
-  begin
-    if rising_edge(outClock) then
-      if lastKey = currentKey then
-        pressed <= '0';
-        keycode <= lastKey;
-      else 
-        pressed <= '1';
-        lastKey <= currentKey;
-        keycode <= lastKey;
-      end if;
     end if;
-  end process;
-  
+  end process;  
 end architecture;

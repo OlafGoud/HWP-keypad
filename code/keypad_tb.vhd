@@ -28,10 +28,8 @@ architecture tb of keypad_tb is
   signal pressed : std_ulogic;
   signal keycode : std_ulogic_vector(3 downto 0);
 
-  -- Simulation control signal to pick which key to press
-  -- Format: (target_row, target_col)
-  signal simulate_key : std_ulogic_vector(1 downto 0) := "00"; 
-  signal test_step    : integer := 0;
+  -- Simulation control signal to track test steps
+  signal test_step : integer := 0;
 
   -- Clock period constant for 50 MHz (20 ns)
   constant CLK_PERIOD : time := 20 ns;
@@ -58,85 +56,70 @@ begin
   end process;
 
   -- Stimulus & Dynamic Key Press Emulator Process
-  -- This process listens to the row scanning outputs of the keypad and 
-  -- pulls the corresponding column low based on the active test case.
   stimulus_process : process
+    
+    -- Helper procedure to simulate pressing any key on the matrix
+    procedure press_key(
+      r_val     : std_ulogic_vector(3 downto 0); 
+      c_val     : std_ulogic_vector(3 downto 0); 
+      step_num  : integer; 
+      key_desc  : string
+    ) is
+    begin
+      report "TEST " & integer'image(step_num) & ": Pressing key '" & key_desc & "'";
+      test_step <= step_num;
+      cols <= "1111"; -- Release before pressing next key
+      
+      -- Wait until the scanner activates the target row
+      loop
+        wait until rising_edge(clk);
+        if rows = r_val then
+          cols <= c_val;
+          exit;
+        end if;
+      end loop;
+      
+      -- Hold key long enough for sampling
+      wait for 1.5 ms; 
+    end procedure;
+
   begin
     -- Initial state: No keys pressed
     cols <= "1111";
     wait for 2 ms;
 
     ---------------------------------------------------------------------------
-    -- Test 1: Press Key "0001" (Row 0, Col 0)
+    -- Standard 4x4 Keypad Layout Mapping:
+    -- Row 0 ("1110"): Col 0 ("1110") = '1', Col 1 ("1101") = '2', Col 2 ("1011") = '3'
+    -- Row 1 ("1101"): Col 0 ("1110") = '4', Col 1 ("1101") = '5', Col 2 ("1011") = '6'
+    -- Row 2 ("1011"): Col 0 ("1110") = '7', Col 1 ("1101") = '8', Col 2 ("1011") = '9'
+    -- Row 3 ("0111"): Col 0 ("1110") = '*', Col 1 ("1101") = '0'
     ---------------------------------------------------------------------------
-    report "TEST 1: Pressing key '0001' (Row 0, Col 0)";
-    test_step <= 1;
+
+    -- Test Keys 1 to 9
+    press_key("1110", "1110",  1, "1");
+    press_key("1110", "1101",  2, "2");
+    press_key("1110", "1011",  3, "3");
     
-    -- Wait until the scanner activates Row 0 ("1110"), then pull Col 0 ("1110") low
-    loop
-      wait until rising_edge(clk);
-      if rows = "1110" then
-        cols <= "1110"; 
-        exit;
-      end if;
-    end loop;
+    press_key("1101", "1110",  4, "4");
+    press_key("1101", "1101",  5, "5");
+    press_key("1101", "1011",  6, "6");
     
-    wait for 1.5 ms; -- Hold key long enough for outClock sampling
+    press_key("1011", "1110",  7, "7");
+    press_key("1011", "1101",  8, "8");
+    press_key("1011", "1011",  9, "9");
+
+    -- Test Key '0' (Row 3, Col 1)
+    press_key("0111", "1101", 10, "0");
+
+    -- Test Key '*' (Row 3, Col 0 - active-low column "1110")
+    press_key("0111", "1110", 11, "*");
 
     ---------------------------------------------------------------------------
-    -- Test 2: Release Key (Return cols to "1111")
+    -- Final Cleanup & End Simulation
     ---------------------------------------------------------------------------
-    report "TEST 2: Releasing key";
-    test_step <= 2;
-    cols <= "1111";
-    wait for 2 ms;
-
-    ---------------------------------------------------------------------------
-    -- Test 3: Press Key "0101" (Row 1, Col 1)
-    ---------------------------------------------------------------------------
-    report "TEST 3: Pressing key '0101' (Row 1, Col 1)";
-    test_step <= 3;
-    
-    -- Wait until the scanner activates Row 1 ("1101"), then pull Col 1 ("1101") low
-    loop
-      wait until rising_edge(clk);
-      if rows = "1101" then
-        cols <= "1101";
-        exit;
-      end if;
-    end loop;
-    
-    wait for 1.5 ms;
-
-    ---------------------------------------------------------------------------
-    -- Test 4: Release Key
-    ---------------------------------------------------------------------------
-    report "TEST 4: Releasing key";
-    test_step <= 4;
-    cols <= "1111";
-    wait for 2 ms;
-
-    ---------------------------------------------------------------------------
-    -- Test 5: Press Key "1001" (Row 2, Col 2)
-    ---------------------------------------------------------------------------
-    report "TEST 5: Pressing key '1001' (Row 2, Col 2)";
-    test_step <= 5;
-    
-    loop
-      wait until rising_edge(clk);
-      if rows = "1011" then
-        cols <= "1011";
-        exit;
-      end if;
-    end loop;
-    
-    wait for 1.5 ms;
-
-    ---------------------------------------------------------------------------
-    -- Test 6: Release and End Simulation
-    ---------------------------------------------------------------------------
-    report "TEST 6: Releasing key and finishing simulation";
-    test_step <= 6;
+    report "TEST 12: Releasing key and finishing simulation";
+    test_step <= 12;
     cols <= "1111";
     wait for 3 ms;
 

@@ -4,7 +4,7 @@ use ieee.numeric_std.all;
 
 entity ClockDivider_tb is
 end entity;
-let op deze 
+--let op deze 
 architecture behavour of ClockDivider_tb is
 component ClockDivider 
   port (
