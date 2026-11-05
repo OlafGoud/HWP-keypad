@@ -40,21 +40,23 @@ architecture behavioral of keypadtoplevel is
     );
   end component;
 
-  component keypad_passcode is
+  component passcode is
     port(
-      reset: in std_ulogic;
-      hex_nibble: in std_ulogic_vector(3 downto 0);
-      pressed: in std_ulogic;
-      code: out nibble_array;
-      digit_count: out natural range 0 to 4;
-      full: out std_ulogic
+      reset       : in std_ulogic;
+      hexNibble   : in std_ulogic_vector(3 downto 0);
+      pressed     : in std_ulogic;
+
+     codeCorrect : out std_ulogic;
+      codeFault   : out std_ulogic;
+      digitPuls   : out std_ulogic;
+      codeReset   : out std_ulogic
     );
   end component;
 
   component seven_segment_driver is
     port (
       reset: in  std_ulogic;
-      digitpulse: in  std_ulogic;
+      digitPuls: in  std_ulogic;
       HEX0: out std_ulogic_vector(6 downto 0);
       HEX1: out std_ulogic_vector(6 downto 0);
       HEX2: out std_ulogic_vector(6 downto 0);
@@ -78,6 +80,21 @@ architecture behavioral of keypadtoplevel is
       resetTimeOutClock: out std_ulogic
     );
   end component;
+
+  component buzzer is
+    generic (
+        clkFreq: natural := 50000000
+    );
+    port(
+        clk: in std_ulogic;
+        reset: in std_ulogic;
+        pressPuls: in std_ulogic;
+        faultPuls: in std_ulogic;
+        correctPuls: in std_ulogic;
+        resetPuls: in std_ulogic;
+        buzzer: out std_ulogic
+    );
+    end component;
 
   -- signals
   signal keyPressed : std_ulogic;
@@ -113,8 +130,8 @@ begin
     resetFromTime => resetFromTimeSig,
 
     resetOut => resetComponentsOut,
-    faultCode => buzzerFault
-    correctCode => buzzerCorrect
+    faultCode => buzzerFault,
+    correctCode => buzzerCorrect,
     ledOut => ledOut,
     resetTimeOutClock => resetClock
   );
@@ -136,7 +153,19 @@ begin
     HEX0 => SEG0,
     HEX1 => SEG1,
     HEX2 => SEG2,
-    HEX3 => SEG3,
+    HEX3 => SEG3
+  );
+
+  buzzerModule : buzzer generic map (
+    clkFreq => 50000000
+  ) port map (
+    clk => clk,
+    reset => '0',
+    pressPuls => keyPressed,
+    faultPuls => buzzerFault,
+    correctPuls => buzzerCorrect,
+    resetPuls => passCodeResetSig,
+    buzzer => buzzerOut
   );
 
   keypadmodule : keypad port map (
@@ -146,7 +175,5 @@ begin
     pressed => keyPressed,
     keycode => keyCode
   );
-
-
   
 end architecture;
