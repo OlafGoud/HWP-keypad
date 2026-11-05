@@ -1,6 +1,44 @@
-\section{Sourcecode (brug)stoplicht}
-\label{code}
-Volledige code is hieronder te zien.
+\section{VHDL Code}
+De volledige code is hieronder te zien.
+
+Dit stukje code is concurrent omdat dit alleen maar de verschillende delen met elkaar verbind
+\lstinputlisting[caption=keypadtoplevel.vhd, style=vhdl]{../code/keypadtoplevel.vhd}
+\newpage
+\subsection{Keypad}
+Het volgende stuk code is voor de keypad, er is besloten dat deze alleen een puls stuurt wanneer er een key is ingedrukt en daarnaast altijd de keycode, dit is omdat alle andere componenten dan geen rekening hoeven te houden met hoe de keypad werkt. Deze code is sequential omdat deze op een frequentie van 100hz per rij werkt omdat dat meer dan genoeg is.
+\lstinputlisting[caption=keypad.vhd, style=vhdl]{../code/keypad.vhd}
+
+\newpage
+\subsection{Passcode}
+De passcode reageert alleen maar op pulses van de de module van de keypad, Deze module wordt gereset in de idle state van de statemachine. De code is opgeslagen in een 16 bit getal, 4 bits per cijfer. De inputs worden aan elkaar vastgeknoopt door and operatoren, waardoor de code 16 bits wordt. Deze wordt dan gecheckt met de juiste code. Als de code juist is zal het signaal voor code juist worden gestuurt, is die fout zal het signaal voor code fout gestuurt worden. Als deze module '*' (1110) krijgt, zal die de reset output geven. Dit reset het systeem waardoor de code gereset wordt. Deze module stuurt ook signalen door naar de sevensegment driver en de buzzer om te laten weten dat er een valid key is ingedrukt. Deze code is sequential omdat deze werkt met een klok.
+
+\lstinputlisting[caption=passcode.vhd, style=vhdl]{../code/passcode.vhd}
+
+\newpage
+\subsection{Buzzer}
+De buzzer is een module voor de externe buzzer die aangesloten is op het ontwerp. Deze zit op de GPIO\_0\_D0 pin. De buzzer heeft een statemachine, die te zien is in het ontwerp hoofdstuk. Deze code zorgt voor dat er piepjes komen als er een code wordt intoetst. Deze module heeft een klok input, en is sequentieel, en heeft vier ander inputs: reset, press, fault en correct. Deze spelen hun geluidjes af wanneer de pin hoog wordt. De press key bij iedere toets, de reset key als het systeem gereset wordt, de correct key als de code juist is en de fault key als de code fout is.
+
+\lstinputlisting[caption=buzzer.vhd, style=vhdl]{../code/buzzer.vhd}
+
+\newpage
+\subsection{Sevensegment driver}
+Deze module zet streepjes op het scherm wanneer deze een puls krijgt van de passcode module. Deze wordt gereset door de statemachine door middel van de rest pin. Deze module telt het aantal pulsen dat die krijgt en laat een dash zien op de segment display die er bij hoort. Deze module telt het aantal pulsen en bij vier gaat die niet meer hoger en wordt pas nul als die gerest wordt. Deze module is ook concurrent omdat deze niet geklokt wordt, hij hoogt alleen een getal op, en als het getal hoog genoeg is laat hij een dash zien.
+
+\lstinputlisting[caption=seven\_segment\_driver, style=vhdl]{../code/seven\_segment\_driver.vhd}
+
+\newpage
+\subsection{Statemachine}
+De statemachine heeft 4 states, Closed, Progress, Correct en fault. Hoe de states werken is te zien in het statediagram. De statemachine is sequentieel.
+
+\lstinputlisting[caption=statemachine.vhd, style=vhdl]{../code/statemachine.vhd}
+
+
+\newpage
+\subsection{Clockdivider}
+De clockdivider die bij deze opdracht is gebruikt is dezelfde als die gebruikt is bij de weekelijkse opgaven.
+
+\lstinputlisting[caption=ClockDivider.vhd, style=vhdl]{../code/ClockDivider.vhd}
+
 
 \section{Testbenches}
 
