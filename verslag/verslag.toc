@@ -8,10 +8,17 @@
 \contentsline {subsection}{\numberline {2.5}Sevensegment Driver}{3}{subsection.2.5}%
 \contentsline {subsection}{\numberline {2.6}Counter}{3}{subsection.2.6}%
 \contentsline {section}{\numberline {3}Ontwerpen}{3}{section.3}%
-\contentsline {section}{\numberline {4}VHDL Code}{7}{section.4}%
-\contentsline {subsection}{\numberline {4.1}Keypad}{11}{subsection.4.1}%
-\contentsline {subsection}{\numberline {4.2}Passcode}{15}{subsection.4.2}%
-\contentsline {subsection}{\numberline {4.3}Buzzer}{18}{subsection.4.3}%
-\contentsline {subsection}{\numberline {4.4}Sevensegment driver}{21}{subsection.4.4}%
-\contentsline {subsection}{\numberline {4.5}Statemachine}{22}{subsection.4.5}%
-\contentsline {subsection}{\numberline {4.6}Clockdivider}{25}{subsection.4.6}%
+\contentsline {section}{\numberline {4}Testbenches}{9}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Buzzer}{9}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Clock Divider}{13}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Keypad}{16}{subsection.4.3}%
+\contentsline {subsection}{\numberline {4.4}Passcode}{19}{subsection.4.4}%
+\contentsline {subsection}{\numberline {4.5}Seven Segment Driver}{23}{subsection.4.5}%
+\contentsline {subsection}{\numberline {4.6}State Machine}{25}{subsection.4.6}%
+\contentsline {section}{\numberline {5}VHDL Code}{32}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Keypad}{36}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Passcode}{40}{subsection.5.2}%
+\contentsline {subsection}{\numberline {5.3}Buzzer}{43}{subsection.5.3}%
+\contentsline {subsection}{\numberline {5.4}Sevensegment driver}{46}{subsection.5.4}%
+\contentsline {subsection}{\numberline {5.5}Statemachine}{47}{subsection.5.5}%
+\contentsline {subsection}{\numberline {5.6}Clockdivider}{50}{subsection.5.6}%
