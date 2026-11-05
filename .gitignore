@@ -6,9 +6,6 @@
 *.fdb_latexmk
 *.wlf
 work
-/.vscode
-/transcript
-/work
-/HWP-Keypad.cr.mti
-/HWP-Keypad.mpf
+.vscode
 transcript
+output_files
