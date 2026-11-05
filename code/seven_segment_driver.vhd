@@ -4,7 +4,7 @@ use ieee.std_logic_1164.all;
 entity seven_segment_driver is
     port (
         reset: in  std_ulogic;
-        digitpulse: in  std_ulogic;
+        digitPuls: in  std_ulogic;
         HEX0: out std_ulogic_vector(6 downto 0);
         HEX1: out std_ulogic_vector(6 downto 0);
         HEX2: out std_ulogic_vector(6 downto 0);
@@ -18,11 +18,11 @@ architecture behavioral of seven_segment_driver is
  
     signal count: natural range 0 to 4 := 0;
 begin
-    process (digitpulse, reset)
+    process (digitPuls, reset)
     begin
         if reset = '1' then
             count <= 0;
-        elsif rising_edge(digitpulse) then
+        elsif rising_edge(digitPuls) then
             if count < 4 then
                 count <= count + 1;
             end if;

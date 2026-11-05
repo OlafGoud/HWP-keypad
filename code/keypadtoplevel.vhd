@@ -57,7 +57,7 @@ architecture behavioral of keypadtoplevel is
   component seven_segment_driver is
     port (
       reset: in  std_ulogic;
-      digitpulse: in  std_ulogic;
+      digitPuls: in  std_ulogic;
       HEX0: out std_ulogic_vector(6 downto 0);
       HEX1: out std_ulogic_vector(6 downto 0);
       HEX2: out std_ulogic_vector(6 downto 0);
@@ -81,6 +81,21 @@ architecture behavioral of keypadtoplevel is
       resetTimeOutClock: out std_ulogic
     );
   end component;
+
+  component buzzer is
+    generic (
+        clkFreq: natural := 50000000
+    );
+    port(
+        clk: in std_ulogic;
+        reset: in std_ulogic;
+        pressPuls: in std_ulogic;
+        faultPuls: in std_ulogic;
+        correctPuls: in std_ulogic;
+        resetPuls: in std_ulogic;
+        buzzer: out std_ulogic
+    );
+    end component;
 
   -- signals
   signal keyPressed : std_ulogic;
@@ -141,6 +156,21 @@ begin
     HEX1 => SEG1,
     HEX2 => SEG2,
     HEX3 => SEG3
+<<<<<<< HEAD
+=======
+  );
+
+  buzzerModule : buzzer generic map (
+    clkFreq => 50000000
+  ) port map (
+    clk => clk,
+    reset => '0',
+    pressPuls => keyPressed,
+    faultPuls => buzzerFault,
+    correctPuls => buzzerCorrect,
+    resetPuls => passCodeResetSig,
+    buzzer => buzzerOut
+>>>>>>> origin/dev-fanuel2
   );
 
   keypadmodule : keypad port map (
@@ -150,7 +180,5 @@ begin
     pressed => keyPressed,
     keycode => keyCode
   );
-
-
   
 end architecture;
