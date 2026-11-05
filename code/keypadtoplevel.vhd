@@ -12,7 +12,8 @@ entity keypadtoplevel is
     SEG2: out std_ulogic_vector(6 downto 0);
     SEG3: out std_ulogic_vector(6 downto 0);
     keypadRows: out std_ulogic_vector(3 downto 0);
-    led: out std_ulogic
+    ledOut: out std_ulogic;
+    buzzerOut: out std_ulogic
   );
 end entity; 
 
@@ -90,7 +91,7 @@ architecture behavioral of keypadtoplevel is
   -- output statemachine
   signal resetComponentsOut : std_ulogic;
   signal buzzerFault : std_ulogic;
-  signal buzzerCoffect : std_ulogic;
+  signal buzzerCorrect : std_ulogic;
   signal resetClock : std_ulogic;
 
 begin
@@ -107,14 +108,14 @@ begin
     codeCorrect => passCodeCorrectSig,
     codeFault => passCodeFaultSig,
     codeReset => passCodeResetSig,
-    pressed => keyPressed
-    clk
+    pressed => keyPressed,
+    clk => clk,
     resetFromTime => resetFromTimeSig,
 
-    resetOut
-    faultCode
-    correctCode
-    ledOut
+    resetOut => resetComponentsOut,
+    faultCode => buzzerFault
+    correctCode => buzzerCorrect
+    ledOut => ledOut,
     resetTimeOutClock => resetClock
   );
 
@@ -132,16 +133,16 @@ begin
   sevensegmodule : seven_segment_driver port map (
     reset => resetComponentsOut,
     digitPuls => digitPulsSig,
-    HEX0 =>
-    HEX1 => 
-    HEX2 =>
-    HEX3 =>
+    HEX0 => SEG0,
+    HEX1 => SEG1,
+    HEX2 => SEG2,
+    HEX3 => SEG3,
   );
 
   keypadmodule : keypad port map (
-    cols =>
-    rows =>
-    clk =>
+    cols => keypadCols,
+    rows => keypadRows,
+    clk => clk,
     pressed => keyPressed,
     keycode => keyCode
   );
