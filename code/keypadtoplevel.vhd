@@ -84,12 +84,12 @@ architecture behavioral of keypadtoplevel is
 
   component buzzer is
     port(
-      clk         : in  STD_LOGIC;
-      resetPuls   : in  STD_LOGIC;
-      pressPuls   : in  STD_LOGIC;
-      faultPuls   : in  STD_LOGIC;
-      correctPuls : in  STD_LOGIC;
-      buzzer      : out STD_LOGIC
+      clk: in  std_ulogic;
+      resetPuls: in  std_ulogic;
+      pressPuls: in  std_ulogic;
+      faultPuls: in  std_ulogic;
+      correctPuls: in  std_ulogic;
+      buzzer: out std_ulogic
     );
   end component;
 
@@ -107,8 +107,6 @@ architecture behavioral of keypadtoplevel is
   signal buzzerFault : std_ulogic;
   signal buzzerCorrect : std_ulogic;
   signal resetClock : std_ulogic;
-  signal resetBuzzer : std_ulogic; -- reset only for testing, is currently not connected
-
 begin
 
   clockdividermodule: ClockDivider generic map (
