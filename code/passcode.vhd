@@ -23,7 +23,7 @@ architecture behavioral of passcode is
   signal inputdig1    : std_ulogic_vector(3 downto 0) := "0000";
   signal inputdig2    : std_ulogic_vector(3 downto 0) := "0000";
   
-  constant correctCode : std_ulogic_vector(15 downto 0) := "0001001000010010";
+  constant correctCode : std_ulogic_vector(15 downto 0) := "0001001010010011";
   
   -- current and last signal from "pressed"
   signal pressedLast   : std_ulogic := '0';

@@ -10,7 +10,6 @@ entity buzzer is
     );
     port (
         clk: in std_ulogic;
-        reset: in std_ulogic;
         pressPuls: in std_ulogic;
         faultPuls: in std_ulogic;
         correctPuls: in std_ulogic;
@@ -31,17 +30,10 @@ architecture behavorial of buzzer is
 
     signal s1, s2, prev: std_ulogic_vector(3 downto 0) := (others => '0');
 begin
-    process (clk, reset)
+    process (clk)
         variable rise: std_ulogic_vector(3 downto 0);
     begin
-        if reset = '1' then
-            state <= idle;
-            doubleBuzz <= '0';
-            timer <= 0;
-            s1 <= (others => '0');
-            s2 <= (others => '0');
-            prev <= (others => '0');
-        elsif rising_edge(clk) then
+        if rising_edge(clk) then
             s1 <= correctPuls & faultPuls & resetPuls & pressPuls;
             s2 <= s1;
             prev <= s2;
