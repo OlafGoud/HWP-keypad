@@ -87,7 +87,6 @@ architecture behavioral of keypadtoplevel is
     );
     port(
         clk: in std_ulogic;
-        reset: in std_ulogic;
         pressPuls: in std_ulogic;
         faultPuls: in std_ulogic;
         correctPuls: in std_ulogic;
@@ -160,7 +159,6 @@ begin
     clkFreq => 50000000
   ) port map (
     clk => clk,
-    reset => '0',
     pressPuls => keyPressed,
     faultPuls => buzzerFault,
     correctPuls => buzzerCorrect,
